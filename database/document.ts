@@ -59,17 +59,17 @@ export default class Document {
     this.loadFieldsFromJson(); // Proceed to create fields
   }
 
-  static create(data: any) {
+  static create(data: {}) {
     this.validateModel();
     console.log(`${this.tableName} has been saved`);
     return new this(data);
   }
 
-  static destroy(data: any) {
+  static destroy(data: {}) {
     // Drop table logic here
   }
 
-  static alter(data: any) {
+  static alter(data: {}) {
     // Alter table logic here
   }
 }
