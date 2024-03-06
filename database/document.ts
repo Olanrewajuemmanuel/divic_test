@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import path from "node:path";
 
 interface FieldDefinition {
   id: string | number;
@@ -13,13 +14,6 @@ export default class Document {
   static fields: FieldDefinition[] = [];
 
   constructor(data: any = {}) {
-    // Check and validate required fields
-    for (const field of Document.fields) {
-      if (field.required && !data[field.name]) {
-        throw new Error(`${field.name} is required.`);
-      }
-    }
-
     // Populate fields
     Object.assign(this, data);
   }
@@ -30,17 +24,18 @@ export default class Document {
   }
 
   static loadFieldsFromJson() {
-    const fileName = `${this.tableName}.json`;
-    const filePath = `./models/${fileName}`;
+    const fileName = `${this.tableName.replace("tab", "")}`;
+    const filePath = `../${fileName}/${fileName}.json`;
 
-    console.log(fileName);
-
-    if (fs.existsSync(filePath)) {
-      const jsonData = fs.readFileSync(filePath, "utf8");
-      this.fields = JSON.parse(jsonData);
+    if (fs.existsSync(path.resolve(__dirname, filePath))) {
+      const jsonData = fs.readFileSync(
+        path.resolve(__dirname, filePath),
+        "utf8"
+      );
+      this.fields = JSON.parse(jsonData)["fields"];
     } else {
       throw new Error(
-        `Model definition file not found.\n Create a ${fileName}.json file`
+        `Model definition file not found.\nCreate a ${fileName}.json file`
       );
     }
   }
@@ -59,9 +54,25 @@ export default class Document {
     this.loadFieldsFromJson(); // Proceed to create fields
   }
 
+  static validateData(data: {}) {
+    for (const field of this.fields) {
+      // Check and validate required fields
+      if (field.required && !data[field.name as keyof {}]) {
+        throw new Error(`${field.name} is required.`);
+      }
+
+      if (typeof data[field.name as keyof {}] !== field.type) {
+        throw new Error(
+          `${field.name} is of incorrect type. Expected type should be ${field.type}`
+        );
+      }
+    }
+  }
+
   static create(data: {}) {
     this.validateModel();
-    console.log(`${this.tableName} has been saved`);
+    this.validateData(data);
+    console.log(`Table ${this.tableName} has been created`);
     return new this(data);
   }
 

@@ -4,8 +4,9 @@ import fs from "node:fs";
 import path from "node:path";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import { snakeToPascal } from "../app/Strategies/caseStrategy";
 
-const argv = yargs(hideBin(process.argv)).parseSync();
+const argv = yargs(hideBin(process.argv)).parserConfiguration({}).parseSync();
 
 const argumentsArr = argv["_"];
 
@@ -25,9 +26,7 @@ if (
   process.exit(1);
 }
 
-const modelName =
-  (argumentsArr[1] as string)[0].toUpperCase() +
-  (argumentsArr[1] as string).slice(1);
+const modelName = snakeToPascal(argumentsArr[1] as string);
 
 const modelDirectory = path.join(__dirname, "../../", "models", modelName);
 const modelTsFile = path.join(modelDirectory, `${modelName}.ts`);

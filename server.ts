@@ -12,7 +12,7 @@ app.listen(PORT, () => console.log(`Server is listening on port ${PORT}`));
 // routes
 app.use("/api", router);
 
-// Server Metrics
+// Server Metrics and health status
 app.get("/metrics", (request, response) => {
   response.sendStatus(200);
 });
