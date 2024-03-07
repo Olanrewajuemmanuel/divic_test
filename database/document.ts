@@ -25,7 +25,7 @@ export default class Document {
 
   static loadFieldsFromJson() {
     const fileName = `${this.tableName.replace("tab", "")}`;
-    const filePath = `../${fileName}/${fileName}.json`;
+    const filePath = `../models/${fileName}/${fileName}.json`;
 
     if (fs.existsSync(path.resolve(__dirname, filePath))) {
       const jsonData = fs.readFileSync(
